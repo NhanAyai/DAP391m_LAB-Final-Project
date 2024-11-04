@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vehicles Flow Map in District 1, Ho Chi Minh, Vietnam</title>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <style>
+        /* Thiết lập chung */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* Tiêu đề chính */
+        h1 {
+            text-align: center;
+            background-color: #2c3e50;
+            color: white;
+            padding: 20px;
+            width: 100%;
+            margin: 0;
+        }
+
+        /* Container chính để chứa hai bảng */
+        .main-container {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            padding: -20px;
+        }
+
+        /* Container hiện có */
+        .container {
+            background-color: white;
+            padding: 20px;
+            margin: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            width: 45%; /* Chia đều không gian */
+        }
+
+        /* Container mới */
+        .new-container {
+            background-color: #f9f9f9;
+            padding: 20px;
+            margin: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            width: 45%; /* Chia đều không gian */
+        }
+
+        /* Form input */
+        .input-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        /* Các nhãn và input */
+        label {
+            font-weight: bold;
+        }
+
+        input, select {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            width: 100px;
+        }
+
+        button {
+            padding: 10px 20px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #2980b9;
+        }
+
+        /* Biểu đồ */
+        .graph-container {
+            margin: 20px 0;
+        }
+
+        /* Kết quả tìm kiếm */
+        .result-search {
+            margin-top: -50px;
+            padding-top: 10px;
+            border-top: 1px solid #ccc;
+        }
+
+        /* Kết quả dự đoán */
+        .result-prediction {
+            margin-top: -5px;
+            padding-top: 10px;
+            border-top: 1px solid #ccc;
+        }
+
+        .new-container {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            max-height: 420px
+        }
+
+        .graph-container {
+            width: 45%;
+            margin-top: -15px;
+            margin-left: -10px;
+        }
+
+        .relationship-container {
+            width: 55%;
+            margin-top: -15px;
+            margin-right: -10px;
+            height: 800px;
+        }
+
+        .last-container{
+            background-color: #e2e2e2; /* Màu nền cho container */
+            padding: 30px 25px 20px 40px; /* Khoảng cách bên trong */
+            
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Đổ bóng cho container */
+            /* border-radius: 10px; Bo góc cho container */
+            width: 49%; /* Giảm chiều rộng xuống */
+            height: 31%; /* Giữ chiều cao (có thể điều chỉnh theo ý muốn) */
+            position: absolute; /* Để vị trí chính xác */
+            bottom: 9px; /* Giảm khoảng cách từ đáy để kéo dài xuống */
+            right: 20px; /* Khoảng cách từ bên phải */
+            transform: translate(0, 0); /* Vị trí ban đầu */
+        }
+
+        .hour-container {
+            width: calc(100% - 40px); /* Giảm chiều rộng xuống một chút để không chạm vào viền container chính */
+            padding: 5px 5px 5px -10px;
+            height: auto;        
+            top: -60px;
+            max-width: 100%;
+            max-height: 100%; 
+            width: 100%; 
+       
+        }
+        /* Thiết lập bảng */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+        }
+
+        td {
+            white-space: nowrap;
+        }
+
+        /* Điều chỉnh chiều rộng cho cột 'Day of the Week' */
+        .day-column {
+            width: 150px; /* Tăng chiều rộng của cột */
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Vehicles Flow Map - Hai Bà Trưng, Quận 1, TP. Hồ Chí Minh</h1>
+
+    <div class="main-container">
+        <!-- Container hiện tại -->
+        <div class="container">
+            <!-- Form Input -->
+            <div class="input-container">
+                <form method="post">
+                    <label for="day">Date:</label>
+                    <select name="day" id="day">
+                        {% for i in range(1, 32) %}
+                            <option value="{{ i }}">{{ i }}</option>
+                        {% endfor %}
+                    </select>
+
+                    <label for="hour">Hour:</label>
+                    <input type="number" name="hour" id="hour" min="1" max="12" required>
+
+                    <label for="am_pm">AM/PM:</label>
+                    <select name="am_pm">
+                        <option value="AM">AM</option>
+                        <option value="PM">PM</option>
+                    </select>
+
+                    <label for="minute">Minute:</label>
+                    <select name="minute" id="minute">
+                        <option value="00">00</option>
+                        <option value="15">15</option>
+                        <option value="30">30</option>
+                        <option value="45">45</option>
+                    </select>
+
+                    <button type="submit">Predict</button>
+                </form>
+            </div>
+
+            <!-- Biểu đồ -->
+            <div class="graph-container">
+                <div>{{ graph_html | safe }}</div>
+            </div>
+
+            <!-- Kết quả tìm kiếm -->
+            <div class="result-container result-search">
+                <h2>Finding Result</h2>
+                {% if filtered_data_html %}
+                    <div>{{ filtered_data_html | safe }}</div>
+                {% else %}
+                    <p class="no-data">Không có dữ liệu cho ngày và giờ đã chọn.</p>
+                {% endif %}
+            </div>
+
+            <!-- Kết quả dự đoán -->
+            <div class="result-container result-prediction">
+                <h2>Predicted Output</h2>
+                <p>Vehicles Flow at this time is: {{ output }}</p>
+            </div>
+        </div>
+
+        <!-- Container mới trống -->
+        <div class="new-container">
+            <!-- <h2>Distribution of traffic situations</h2> -->
+            <div class="graph-container">
+                <div>{{ fig_pie_html | safe }}</div>
+            </div>
+            <div class="relationship-container">
+                <div>{{fig_relationship_html | safe }}</div>
+            </div>
+        </div>  
+        </div>
+    </div>
+
+    <div class="last-container">
+        <!-- Nội dung sẽ được thêm vào sau -->
+        <div class="hour-container">
+            <div>{{ fig_hour_html | safe }}</div>
+        </div>
+    </div>
+
+    
+</body>
+</html>
